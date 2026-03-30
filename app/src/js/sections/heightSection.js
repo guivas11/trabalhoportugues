@@ -23,7 +23,7 @@ heightMap.el.rotation.y = -0.6;
 heightSection.add(heightMap.el);
 
 var text = new TextPanel(
-  'L  E  T    I  T \n M  O  R  P  H',
+  'P  R  I  N  C  I  P  A  I  S \n N  O  M  E  S',
   {
     align: 'right',
     style: '',
@@ -32,6 +32,7 @@ var text = new TextPanel(
   }
 );
 text.el.position.set(-20, 0, 0);
+text.el.rotation.y = 0;
 heightSection.add(text.el);
 
 heightMap.el.visible = false;

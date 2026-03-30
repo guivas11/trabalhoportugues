@@ -3,82 +3,74 @@
 var THREE = require('three');
 var TweenLite = require('tweenlite');
 
-var SPRITE3D = require('../libs/sprite3DLib');
-var HASH = require('../modules/hashModule');
+var TextPanel = require('./TextPanelObject3D');
 
 /**
  * Hello title
  *
- * @class Title
- * @constructor
- * @requires THREE, TweenLite, SPRITE3D, HASH
+ * Replaces the original sprite-based title with a text panel so the
+ * first slide can show the current school presentation title.
  */
 function Title () {
-  var path;
+  var title = new TextPanel('TRABALHO DE\nPORTUGUÊS', {
+    size: 96,
+    align: 'center',
+    lineSpacing: 16,
+    color: 'rgba(220, 220, 220, 0.92)'
+  });
 
-  var sprites = {
-    akqa: './app/public/img/sprite-AKQA.png',
-    hki: './app/public/img/sprite-HKI.png',
-    grouek: './app/public/img/sprite-grouek.png',
-    mediamonks: './app/public/img/sprite-mediamonks.png',
-    none: './app/public/img/sprite-none.png',
-    soleilnoir: './app/public/img/sprite-soleilnoir.png',
-    thread: './app/public/img/sprite-thread.png',
-    ultranoir: './app/public/img/sprite-ultranoir.png'
-  };
+  var group = new THREE.Object3D();
+  group.add(title.el);
+  group.position.set(0, 3.5, 0);
 
-  if (sprites[HASH.hash]) {
-    path = sprites[HASH.hash];
-  } else {
-    path = sprites.none;
+  var cache = { y: 18, opacity: 0 };
+
+  function updateOpacity (value) {
+    title.el.traverse(function (child) {
+      if (child.material && child.material.opacity !== undefined) {
+        child.material.opacity = value;
+      }
+    });
   }
-
-  var texture = new THREE.ImageUtils.loadTexture(path);
-  texture.flipY = true;
-
-  var sprite = new SPRITE3D.Sprite(texture, {
-    horizontal: 4,
-    vertical: 10,
-    total: 40,
-    duration: 70,
-    loop: true
-  });
-
-  var material = new THREE.MeshBasicMaterial({
-    map: texture,
-    depthWrite: false,
-    depthTest: true,
-    transparent: true
-  });
-
-  var geometry = new THREE.PlaneGeometry(30, 15);
-  var plane = new THREE.Mesh(geometry, material);
 
   function update () {
-    plane.position.y = cache.y;
-    material.opacity = cache.opacity;
+    group.position.y = cache.y;
+    updateOpacity(cache.opacity);
   }
 
-  var cache = { y: 20, opacity: 0 };
-  var inTween = TweenLite.to(cache, 1, { y: 0, opacity: 1, paused: true, onUpdate: update});
-
-  this.el = plane;
+  this.el = group;
 
   this.in = function () {
-    inTween.play();
+    title.in();
+
+    TweenLite.to(cache, 1.2, {
+      y: 3.5,
+      opacity: 1,
+      onStart: function () {
+        group.visible = true;
+      },
+      onUpdate: update
+    });
   };
 
   this.out = function () {
-    inTween.reverse();
+    title.out('up');
+
+    TweenLite.to(cache, 0.9, {
+      y: 18,
+      opacity: 0,
+      onUpdate: update,
+      onComplete: function () {
+        group.visible = false;
+      }
+    });
   };
 
-  this.start = function () {
-    sprite.start();
-  };
+  this.start = function () {};
+  this.stop = function () {};
 
-  this.stop = function () {
-    sprite.stop();
-  };
+  group.visible = false;
+  update();
 }
 
 module.exports = Title;

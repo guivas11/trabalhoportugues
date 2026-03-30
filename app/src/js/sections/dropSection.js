@@ -13,7 +13,7 @@ drop.el.position.y = -10;
 dropSection.add(drop.el);
 
 var text = new TextPanel(
-  'F  R  O  M \n A N   I D E A',
+  'C  O  R    E \n R  U  P  T  U  R  A',
   {
     align: 'right',
     style: '',
@@ -22,6 +22,7 @@ var text = new TextPanel(
   }
 );
 text.el.position.set(-10, 8, 0);
+text.el.rotation.y = 0;
 dropSection.add(text.el);
 
 drop.el.visible = false;

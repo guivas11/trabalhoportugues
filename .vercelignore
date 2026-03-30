@@ -1,0 +1,11 @@
+node_modules
+.git
+assets
+app/src
+gulp
+.bowerrc
+bower.json
+gulpfile.js
+package.json
+package-lock.json
+README.md

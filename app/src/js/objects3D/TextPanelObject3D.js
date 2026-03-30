@@ -33,57 +33,9 @@ function TextPanel (text, options) {
 
   var canvas = document.createElement('canvas');
   var context = canvas.getContext('2d');
-
   var font = parameters.style + ' ' + parameters.size + 'px' + ' ' + parameters.font;
 
-  context.font = font;
-
-  // max width
-  var width;
-
-  var maxWidth = 0;
-  for (var j = 0; j < wordsCount; j++) {
-    var tempWidth = context.measureText(words[j]).width;
-    if (tempWidth > maxWidth) {
-      maxWidth = tempWidth;
-    }
-  }
-
-  width = maxWidth;
-
-  // get the line height and the total height
-  var lineHeight = parameters.size + parameters.lineSpacing;
-  var height = lineHeight * wordsCount;
-
-  // security margin
-  canvas.width = width + 20; 
-  canvas.height = height + 20;
-
-  // set the font once more to update the context
-  context.font = font;
-  context.fillStyle = parameters.color;
-  context.textAlign = parameters.align;
-  context.textBaseline = 'top';
-
-  // draw text
-  for (var k = 0; k < wordsCount; k++) {
-    var word = words[k];
-
-    var left;
-
-    if (parameters.align === 'left') {
-      left = 0;
-    } else if (parameters.align === 'center') {
-      left = canvas.width / 2;
-    } else {
-      left = canvas.width;
-    }
-
-    context.fillText(word, left, lineHeight * k);  
-  }
-
   var texture = new THREE.Texture(canvas);
-  texture.needsUpdate = true;
 
   var material = new THREE.MeshBasicMaterial({
     map: texture,
@@ -94,12 +46,10 @@ function TextPanel (text, options) {
     opacity: 0
   });
 
-  var geometry = new THREE.PlaneGeometry(canvas.width / 20, canvas.height / 20);
-
   // Group is exposed, mesh is animated
   var group = new THREE.Object3D();
 
-  var mesh = new THREE.Mesh(geometry, material);
+  var mesh = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), material);
   mesh.position.y = -20;
   group.add(mesh);
 
@@ -112,7 +62,55 @@ function TextPanel (text, options) {
   function update () {
     mesh.position.y = cache.y;
     mesh.material.opacity = cache.opacity;
-  }  
+  }
+
+  function drawText () {
+    context.font = font;
+
+    var maxWidth = 0;
+    for (var j = 0; j < wordsCount; j++) {
+      var tempWidth = context.measureText(words[j]).width;
+      if (tempWidth > maxWidth) {
+        maxWidth = tempWidth;
+      }
+    }
+
+    var lineHeight = parameters.size + parameters.lineSpacing;
+    var height = lineHeight * wordsCount;
+
+    canvas.width = Math.ceil(maxWidth) + 20;
+    canvas.height = Math.ceil(height) + 20;
+
+    context.clearRect(0, 0, canvas.width, canvas.height);
+    context.font = font;
+    context.fillStyle = parameters.color;
+    context.textAlign = parameters.align;
+    context.textBaseline = 'top';
+    for (var k = 0; k < wordsCount; k++) {
+      var word = words[k];
+      var left;
+
+      if (parameters.align === 'left') {
+        left = 0;
+      } else if (parameters.align === 'center') {
+        left = canvas.width / 2;
+      } else {
+        left = canvas.width;
+      }
+
+      context.fillText(word, left, lineHeight * k);
+    }
+
+    mesh.geometry.dispose();
+    mesh.geometry = new THREE.PlaneGeometry(canvas.width / 20, canvas.height / 20);
+    texture.needsUpdate = true;
+  }
+
+  drawText();
+
+  if (document.fonts && document.fonts.load) {
+    document.fonts.load(font).then(drawText);
+  }
 
   this.in = function () {
     TweenLite.to(cache, 1.5, { y: 0, opacity: 1,

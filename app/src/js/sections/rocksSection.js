@@ -11,7 +11,7 @@ var rocks = new Rocks();
 rocksSection.add(rocks.el);
 
 var text = new TextPanel(
-  'K  E  E  P  \n  L  E  A  R  N  I  N  G',
+  'B  R  A  S  I  L \n 1  9  2  2',
   {
     align: 'center',
     style: '',
@@ -20,6 +20,7 @@ var text = new TextPanel(
   }
 );
 text.el.position.set(0, 0, 0);
+text.el.rotation.y = 0;
 rocksSection.add(text.el);
 text.out('down');
 

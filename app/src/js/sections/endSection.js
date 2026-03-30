@@ -8,7 +8,7 @@ var LookAtField = require('../objects3D/LookAtFieldObject3D');
 var endSection = new Section('end');
 
 var text = new TextPanel(
-  'T  H  A  N  K  S \n F  O  R    W  A  T  C  H  I  N  G',
+  'C  O  N  C  L  U  S  A  O \n D  O    T  E  M  A',
   {
     align: 'center',
     style: '',

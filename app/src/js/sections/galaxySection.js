@@ -14,7 +14,7 @@ galaxySection.add(galaxy.el);
 galaxy.el.visible = false;
 
 var text = new TextPanel(
-  'W  O  R  K \n A  S    A    T  E  A  M',
+  'M  O  D  E  R  N  I  S  M  O \n B  R  A  S  I  L  E  I  R  O',
   {
     align: 'center',
     style: '',
@@ -23,6 +23,7 @@ var text = new TextPanel(
   }
 );
 text.el.position.set(0, 20, -20);
+text.el.rotation.y = 0;
 galaxySection.add(text.el);
 
 galaxySection.onIn(function (way) {
